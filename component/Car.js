@@ -21,7 +21,7 @@ export const addRoundedRect = ctx => {
 export const defaultCar = {
   x: 0,
   y: 0,
-  s: 5,
+  s: 1,
   l: 25, //length of vehicle
   d: 'e',
   dd: false,

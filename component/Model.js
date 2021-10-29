@@ -1,44 +1,56 @@
 
-var MaxGreenTime = 500; //绿灯最大时间
-var MinGreenTime = 20;  //绿灯最小时间
-var PopSpeed = 1; // 单方向平均每秒种可以开走多少辆车
+var MaxGreenTime = 100; //绿灯最大时间
+var MinGreenTime = 5;  //绿灯最小时间
+var PopSpeed = 2; // 单方向平均每秒种可以开走多少辆车
 // var PushSpeed = 0.5; // 单方向每秒开进多少辆车
 
 class RoadModel {
-  // lightColor = "green"; //第一、三车道的红绿灯颜色状态，为了简化，只保留两种颜色: red,green
+  // lightColor = "green"; ，为了简化，只保留两种颜色: red,green
   // remainingTimeSec = MinGreenTime; //当前红绿灯的剩余秒数
   // greenTime: MinGreenTime, // 第一、三车道的绿灯时间设置
   // redTime: MinGreenTime, // 第一、三车道的红灯时间设置
   // vehicleNum1: 0, //第一、三车道的车辆数
   // vehicleNum2: 0, //第二、四车道的车辆数
   constructor() {
-    this.lightColor = "green"; 
-    this.remainingTimeSec = MinGreenTime; 
+    this.numE = 0; 
+    this.numW = 0; 
+    this.numS = 0; 
+    this.numN = 0; 
+    this.greenH = true; //第一、三车道是绿灯
+    this.remain = MinGreenTime; 
     this.greenTime = MinGreenTime; 
     this.redTime = MinGreenTime; 
-    this.vehicleNum1 = 0; 
-    this.vehicleNum2 = 0; 
   }
   //红绿灯时间到，切换状态
   switchState(){
-    if (this.lightColor === "green") {
-      var needTime = this.vehicleNum2/PopSpeed;
+    if (this.greenH) {
+      var numV = Math.max(this.numS,this.numN);
+      var needTime = numV /PopSpeed;
       this.redTime = this.rangedTime(needTime);
-      this.lightColor = "red";
-      this.remainingTimeSec = this.redTime;
+      this.remain = this.redTime;
+      console.log(`垂直方向最大车辆数:${numV}, 设置垂直方向绿灯时间:${this.redTime}`);
     } else {
-      var needTime = this.vehicleNum1/PopSpeed;
+      var numH = Math.max(this.numE,this.numW);
+      var needTime = numH / PopSpeed;
       this.greenTime = this.rangedTime(needTime);
-      this.lightColor = "green";
-      this.remainingTimeSec = this.greenTime;
+      this.remain = this.greenTime;
+      console.log(`水平方向最大车辆数:${numH}, 设置水平方向绿灯时间:${this.greenTime}`);
     }
+    this.greenH = !this.greenH;
   }
   rangedTime(needTime){
+    needTime = Math.round(needTime);
     if(needTime < MinGreenTime) return MinGreenTime;
     if(needTime > MaxGreenTime) return MaxGreenTime;
-    return needTime;
+    return needTime
   }
 
+  getNumH() {
+    return Math.max(this.numE, this.numW);
+  }
+  getNumV() {
+    return Math.max(this.numN, this.numS);
+  }
   //模拟车辆以一定速度从车道上开走
   // popVehicles() {
   //   if (this.lightColor === "green") {

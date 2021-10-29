@@ -7,7 +7,9 @@ import roadModel from './component/Model';
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
-
+const TotalCars = 60;
+const policies = [0.1,0.5,0.9];
+const policy = 0;
 
 addRoundedRect(ctx);
 
@@ -72,25 +74,7 @@ const roadConfig = [
   // }
 ];
 
-// 定时变换信号灯
-let left_green = false;
 
-function left_greenc() {
-  left_green = !left_green;
-}
-
-let intervalId = setInterval(() => {
-  left_greenc();
-}, 3000);
-
-// 动态调整红绿灯，会立马先变换一次，然后再根据设置的时间定时变换
-const changeInterval = function(time) {
-  clearInterval(intervalId)
-  left_greenc();
-  intervalId = setInterval(() => {
-    left_greenc();
-  }, time)
-}
 
 // 初始化
 function init() {
@@ -99,13 +83,15 @@ function init() {
   roads = [];
   intersections_arr = [];
 
-  const roadTotal = roadConfig.length;
+  // const roadTotal = roadConfig.length;
 
   // 生成car
-  const car_no = 10;
+  const car_no = TotalCars;
   for (let i = 0; i < car_no; i++) {
     let car = new Car();
-    let randomRoad = roadConfig[~~Math.random() * roadTotal];
+    const random = Math.random();
+    const roadIndex = random > policies[policy] ? 1 : 0;
+    let randomRoad = roadConfig[roadIndex];
     randomRoad.carNum += 1;
     const { direction, x, y, width, height } = randomRoad;
 
@@ -160,12 +146,14 @@ function drawscene() {
   // 路口
   intersections_arr.forEach(intersection => {
     // intersection.setTraffic(left_green);
-    intersection.setTraffic(roadModel.lightColor === "green");
+    intersection.setTraffic(roadModel.greenH);
     intersection.draw(ctx);
   });
 
   // 车辆
   drive_cars();
+
+  countCars();
 }
 
 // 移动车辆
@@ -482,17 +470,32 @@ init();
 animloop();
 
 setInterval(()=>{
-  -- roadModel.remainingTimeSec;
-  if (roadModel.remainingTimeSec === 0) { //剩余时间到，改变红灯状态
+  -- roadModel.remain;
+  if (roadModel.remain === 0) { //剩余时间到，改变红灯状态
     roadModel.switchState();
   }
   console.log(roadModel);
-  countCars();
+  console.log(`水平方向红绿灯: ${roadModel.greenH ? "绿灯":"红灯"}, 剩余时间:${roadModel.remain}秒，水平/垂直方向绿灯时间配置:${roadModel.greenTime}/${roadModel.redTime}, 等待车流量:${roadModel.getNumH()}/${roadModel.getNumV()}`);
 }, 1000);
 
 function countCars(){
-  // console.log(cars);
-  // for(const car of cars) {
-    
-  // }
+  // console.log(cars[0]);
+  roadModel.numE = 0;
+  roadModel.numW = 0;
+  roadModel.numS = 0;
+  roadModel.numN = 0;
+  for(const car of cars) {
+    if (car.d === 'e' && car.x < w/2) { //西向东
+      roadModel.numE ++;
+    }
+    else if (car.d === 'w' && car.x > w/2) { //东向西
+      roadModel.numW ++;
+    }
+    else if (car.d === 's' && car.y < h/2) { //北向南
+      roadModel.numS ++;
+    }
+    else if (car.d === 'n' && car.y > h/2) { //南向北
+      roadModel.numN ++;
+    }
+  }
 }
