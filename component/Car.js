@@ -162,12 +162,12 @@ class Car {
         rand_no2 = 6;
       }
       if (rand_dir < rand_no1) {
-        if (inter.roadbottom == true) {
+        if (inter.roadbottom == true) {  //右转 30% 概率
           var dir = 's';
           c.d = 's';
           c.x = inter.x + 10;
           c.y = inter.y + inter.height - 27;
-        } else {
+        } else {  //直行
           if (inter.roadright == true) {
             var dir = c.d;
           } else {
@@ -175,12 +175,12 @@ class Car {
           }
         }
       } else if (rand_dir > 3 && rand_dir < rand_no2) {
-        if (inter.roadtop == true) {
+        if (inter.roadtop == true) { //左转 30% 概率
           var dir = 'n';
           c.d = 'n';
           c.x = inter.x + inter.width - 9;
           c.y = inter.y + c.l + 2;
-        } else {
+        } else {  //直行
           if (inter.roadright == true) {
             var dir = c.d;
           } else {
@@ -188,9 +188,9 @@ class Car {
           }
         }
       } else {
-        if (inter.roadright == true) {
+        if (inter.roadright == true) { //直行 40% 概率
           var dir = c.d;
-        } else {
+        } else {   //右转
           //turn
           var dir = 's';
           c.d = 's';

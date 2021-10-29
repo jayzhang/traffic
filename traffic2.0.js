@@ -474,7 +474,8 @@ setInterval(()=>{
   if (roadModel.remain === 0) { //剩余时间到，改变红灯状态
     roadModel.switchState();
   }
-  console.log(roadModel);
+  // console.log(roadModel);
+  // console.log(intersections_arr[0]);
   console.log(`水平方向红绿灯: ${roadModel.greenH ? "绿灯":"红灯"}, 剩余时间:${roadModel.remain}秒，水平/垂直方向绿灯时间配置:${roadModel.greenTime}/${roadModel.redTime}, 等待车流量:${roadModel.getNumH()}/${roadModel.getNumV()}`);
 }, 1000);
 
