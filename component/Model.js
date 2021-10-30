@@ -66,7 +66,7 @@ class RoadModel {
       return `<p>${key}：${showObj[key]}</p>`
     }).join('')
 
-    document.getElementById('traffic-light').innerHTML = `<p>剩余时间：${roadModel.remain}</p>`
+    document.getElementById('traffic-light').innerHTML = `<span>剩余时间：${roadModel.remain}</span>`
     
     console.log(showObj);
     return showObj;

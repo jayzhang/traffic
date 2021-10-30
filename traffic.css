@@ -68,9 +68,9 @@ button {
     padding: 12px;
     border-radius: 8px;
     background: #00A1F3;
-    opacity: .7;
+    /* opacity: .7; */
     color: #d8d8d8;
-    font-size: 12px;
+    font-size: 14px;
 }
 .static-container {
     width: 200px;
@@ -81,11 +81,11 @@ button {
     padding: 12px;
     border-radius: 8px;
     background: #00A1F3;
-    opacity: .7;
+    /* opacity: .7; */
     color: #d8d8d8;
-    font-size: 12px;
+    font-size: 14px;
     /* line-height: 24px; */
 }
-.static-container p {
+.static-container p,#traffic-light p {
     padding: 0;
 }

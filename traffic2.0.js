@@ -29,8 +29,8 @@ let w = document.documentElement.clientWidth,
 canvas.width = w;
 canvas.height = h;
 
-document.getElementById('traffic-light').style.top = `${h / 2 - 120}px`;
-document.getElementById('traffic-light').style.left = `${w / 2 - 150}px`;
+document.getElementById('traffic-light').style.top = `${h / 2 - 100}px`;
+document.getElementById('traffic-light').style.left = `${w / 2 - 160}px`;
 
 let roads = [],
   intersections_arr = [],
