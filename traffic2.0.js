@@ -164,7 +164,7 @@ function drive_cars() {
     var c = cars[i];
     // 控制速度
     // c.s = Speed;
-    // c.start(Speed);
+    c.start(Speed);
     if (c.d == 'e') {
       for (var l = 0; l < carCount; l++) {
         var c2 = cars[l];
