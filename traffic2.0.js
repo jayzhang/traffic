@@ -1,13 +1,13 @@
 import { isBrowserOk } from './util';
 import Road from './component/Road';
-import Car, { addRoundedRect, defaultCar } from './component/Car';
+import Car, { addRoundedRect, defaultCar } from './Car';
 import Intersections from './component/Intersections';
 import color from './color';
 import roadModel from './component/Model';
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
-const TotalCars = 1;
+const TotalCars = 30;
 const Speed = 2;
 const policies = [0.1,0.5,0.9];
 const policy = 0;
@@ -38,7 +38,7 @@ const roadConfig = [
     x: 0,
     y: h / 2 - 40,
     width: w,
-    height: 160,
+    height: 80,
     direction: 'h',
     num: 2,
     carNum: 0
@@ -46,7 +46,7 @@ const roadConfig = [
   {
     x: w / 2 - 40,
     y: 0,
-    width: 160,
+    width: 80,
     height: h,
     direction: 'v',
     num: 2,
@@ -163,7 +163,7 @@ function drive_cars() {
   for (var i = 0; i < carCount; i++) {
     var c = cars[i];
     // 控制速度
-    // c.s = Speed;
+    c.s = Speed;
     // c.start(Speed);
     if (c.d == 'e') {
       for (var l = 0; l < carCount; l++) {
@@ -171,13 +171,12 @@ function drive_cars() {
         var dc = c.check_distance(c2, 'x');
         if (dc == true) {
           // 车辆停止
-          // c.s = 0;
-          c.stop();
+          c.s = 0;
+          // c.stop();
           // 两车道，车辆放置到较少车辆车道
           if (inter.height === 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
               var inter = intersections_arr[k];
-
               if (inter.y + inter.height > c.y && inter.y < c.y) {
                 var lc = 0;
                 var ld = 0;
@@ -217,7 +216,7 @@ function drive_cars() {
               } else {
                 //green
                 // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.start(Speed);
                 //改变方向
                 c.gen_dir(inter);
               }
@@ -285,7 +284,7 @@ function drive_cars() {
               } else {
                 //green
                 // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.start(Speed);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -352,7 +351,7 @@ function drive_cars() {
               } else {
                 //green
                 // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.start(Speed);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -419,7 +418,7 @@ function drive_cars() {
               } else {
                 //green
                 // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.start(Speed);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -468,8 +467,11 @@ function genRoadCarNum() {
 // 控制车辆开始运动
 let isPlay = false,
   btnEl = document.getElementById('play');
-
+let startTime = 0;
 btnEl.onclick = () => {
+  if(!isPlay) {
+    startTime = new Date().getTime();
+  }
   isPlay = !isPlay;
   btnEl.innerHTML = isPlay ? 'pause' : 'play';
   isPlay && animloop();
@@ -492,18 +494,22 @@ setInterval(()=>{
   if (roadModel.remain === 0) { //剩余时间到，改变红灯状态
     roadModel.switchState();
   }
-  cars[0].showInfo();
-  // console.log(roadModel);
-  // console.log(intersections_arr[0]);
-  roadModel.showInfo();
+  // const carInfo = cars[0].showInfo();
+  const roadStat = roadModel.showInfo();
+  // const stat = document.getElementById('stat');
+  // stat.innerHTML = `<pre>${JSON.stringify(roadStat, null, 4)}</pre>`;
+  // stat.innerHTML = "平均等待时间:" + (roadModel.averageWaitingTime/1000).toFixed(3) + "秒<br>";
+  // stat.innerHTML += "吞吐率:" + (roadModel.throughputRate).toFixed(3) + "辆/分钟<br>";
 }, 1000);
 
 function countCars(){
-  
   roadModel.numE = 0;
   roadModel.numW = 0;
   roadModel.numS = 0;
   roadModel.numN = 0;
+  var totalExistNum = 0;
+  var totalWaitingTime = 0;
+  var totalWaitingNum = 0;
   for(const car of cars) {
     if (car.d === 'e' && car.x < w/2) { //西向东
       roadModel.numE ++;
@@ -517,5 +523,15 @@ function countCars(){
     else if (car.d === 'n' && car.y > h/2) { //南向北
       roadModel.numN ++;
     }
+    totalExistNum += car.exitNum;
+    totalWaitingTime += car.waitingTime;
+    totalWaitingNum += car.waitingNum;
   }
+  const totalTimeMs = new Date().getTime() - startTime;
+  roadModel.averageWaitingTime = totalWaitingTime/totalWaitingNum;
+  roadModel.throughputNum = totalExistNum;
+  roadModel.throughput = totalExistNum * 1000/totalTimeMs;
+  // if (totalTimeMs >= 180) {
+  //   isPlay = false;
+  // }
 }
