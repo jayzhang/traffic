@@ -151,22 +151,22 @@ class Intersection {
   drawTrafficLight(light, ctx, x, y, w, h) {
     let shadow_color = light.color;
     ctx.save();
-
+    
     let diff = Math.max(w, h) / light.num / 2;
     for (let i = 0; i < light.num; i++) {
       ctx.fillStyle = shadow_color;
       ctx.shadowColor = shadow_color;
       if (light.dir === 'left') {
-        ctx.fillRect(x - 3, y + diff * (2 * i + 1), 4, 4);
+        ctx.fillRect(x - 3, y + diff * (2 * i + 1), 10, 10);
       }
       if (light.dir === 'right') {
-        ctx.fillRect(x + 1, y + h - diff * (2 * i + 1), 4, 4);
+        ctx.fillRect(x + 1, y + h - diff * (2 * i + 1), 10, 10);
       }
       if (light.dir === 'top') {
-        ctx.fillRect(x + diff * (2 * i + 1), y - 3, 4, 4);
+        ctx.fillRect(x + diff * (2 * i + 1), y - 3, 10, 10);
       }
       if (light.dir === 'bottom') {
-        ctx.fillRect(x + w - diff * (2 * i + 1), y + 1, 4, 4);
+        ctx.fillRect(x + w - diff * (2 * i + 1), y + 1, 10, 10);
       }
       ctx.fill();
       ctx.restore();

@@ -66,8 +66,9 @@ button {
 
 .static-container {
     width: 200px;
-    height: 200px;
     background: #fff;
     position: fixed;
     top: 30px;
+    left: 24px;
+    padding: 24px;
 }

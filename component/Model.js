@@ -79,6 +79,9 @@ class RoadModel {
       "剩余/配置时间(秒)": `${roadModel.remain}/${roadModel.greenH ? roadModel.greenTime:roadModel.redTime}`,
       "水平/垂直待行车辆数": `${roadModel.getNumH()}/${roadModel.getNumV()}`,
     };
+    document.getElementById('static').innerHTML = Object.keys(showObj).map(key => {
+      return `<p>${key}：${showObj[key]}</p>`
+    }).join('')
     console.log(showObj);
   }
 }
