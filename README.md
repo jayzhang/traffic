@@ -1,78 +1,21 @@
-# 基于 canvas 的交通运行图
+# 介绍
 
- 源码来源[codepen](https://codepen.io/motorlatitude/pen/grdtj)
+本项目通过web方式进行模拟十字路口道路拥挤状况，实现红绿灯时长智能调控算法，优化通行吞吐率，提升通行效率。
+
+本项目基于[codepen](https://codepen.io/motorlatitude/pen/grdtj)进行二次开发，定制部分包括：
+- 车辆按照指定概率随机从4个车道驶入
+- 红绿灯时间按照智能算法动态调整
+- 提供单个十字路口的通行效率统计信息
+
+演示效果如下：
+![image](https://user-images.githubusercontent.com/1658418/139542773-0f1b6f3a-330a-4347-bc8d-5ce897c8a93c.png)
 
 ## 预览
 
 `node`环境，全局安装`parcel`
 
-* `parcel traffic2.0.html` 预览改造完成页面
-* `parcel traffic.html`预览原作者页面
+* `parcel traffic2.0.html` 预览改造完成页面
+* `parcel traffic.html` 预览原作者页面
 
-## 绘制对象与流程
 
- 覆盖式 draw
-
-* 道路（roads）`Road.js`
-  * 主路（road）
-  * 路沿（roadEdge）
-  * 实线（solidLine）(双向车道分割线，单条)
-  * 虚线（dashLine）（同向道路分割线，多条）
-
-![Road](/images/Road.png)
-
-* 路口（intersections）`Intersections.js`
-
-  * 道路（road）（覆盖路口交叉部分）
-  * 斑马线（zebraCross）
-  * 停止线（stopLine）
-  * 信号灯（trafficLight）
-
-![intersections](/images/intersections.png)
-
-* 车（cars）`Car.js`
-  * 车身
-  * 车窗
-  * 后视镜
-
-![Car](/images/Car.png)
-
-## 车辆移动过程
-
-![canvas_traffic](/images/canvas_traffic.png)
-
-## 可优化部分
-
-* 道路，路口属性少， 目前只能绘制垂直、水平道路
-* 车辆转弯没有动画（缺少关键帧）
-* 道路车道数判定依靠 width（height），可通过增加道路属性
-* 车辆移动过程`if`、`for`使用频繁，可尝试简化移动模型
-* 信号灯不区分直行、左右转
-
-### 附：
-
-```
-.
-├── README.md
-├── color.js
-├── component
-│   ├── Car.js              // Car类
-│   ├── Intersections.js    // Intersections类
-│   └── Road.js             // Road类
-├── images
-│   ├── Car.png
-│   ├── Road.png
-│   ├── canvas_traffic.png
-│   └── intersections.png
-├── package.json             // parcel做脚手架
-├── traffic.css
-├── traffic.html             // 原作者代码
-├── traffic.js               // 原作者代码
-├── traffic2.0.html
-├── traffic2.0.js            // 入口JS
-└── util.js
-```
-
-原作者代码在单一 JS 内，可读性较低，`if`、`for`嵌套深，已完成部分优化
-
-转弯执行规则暂未分析，其余代码均已添加注释与模块化。
+原作者代码在单一JS内，可读性较低，`if`、`for`嵌套深，代码的模块化重构本人正在进行中。
