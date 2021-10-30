@@ -80,6 +80,7 @@ class RoadModel {
       "水平/垂直待行车辆数": `${roadModel.getNumH()}/${roadModel.getNumV()}`,
     };
     console.log(showObj);
+    return showObj;
   }
 }
 

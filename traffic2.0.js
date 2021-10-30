@@ -163,7 +163,7 @@ function drive_cars() {
   for (var i = 0; i < carCount; i++) {
     var c = cars[i];
     // 控制速度
-    // c.s = Speed;
+    c.s = Speed;
     // c.start(Speed);
     if (c.d == 'e') {
       for (var l = 0; l < carCount; l++) {
@@ -171,8 +171,8 @@ function drive_cars() {
         var dc = c.check_distance(c2, 'x');
         if (dc == true) {
           // 车辆停止
-          // c.s = 0;
-          c.stop();
+          c.s = 0;
+          // c.stop();
           // 两车道，车辆放置到较少车辆车道
           if (inter.height === 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
@@ -212,12 +212,12 @@ function drive_cars() {
               counter++;
               if (inter.left == color.traffic.red) {
                 //red
-                // c.s = 0;
-                c.stop();
+                c.s = 0;
+                // c.stop();
               } else {
                 //green
-                // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.s = defaultCar.s;
+                // c.start(defaultCar.s);
                 //改变方向
                 c.gen_dir(inter);
               }
@@ -241,8 +241,8 @@ function drive_cars() {
         var c2 = cars[l];
         var dc = c.check_distance(c2, '-y');
         if (dc == true) {
-          // c.s = 0;
-          c.stop();
+          c.s = 0;
+          // c.stop();
           if (inter.width == 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
               var inter = intersections_arr[k];
@@ -280,12 +280,12 @@ function drive_cars() {
               counter++;
               if (inter.bottom == color.traffic.red) {
                 //red
-                // c.s = 0;
-                c.stop();
+                c.s = 0;
+                // c.stop();
               } else {
                 //green
-                // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.s = defaultCar.s;
+                // c.start(defaultCar.s);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -308,8 +308,8 @@ function drive_cars() {
         var c2 = cars[l];
         var dc = c.check_distance(c2, 'y');
         if (dc == true) {
-          // c.s = 0;
-          c.stop();
+          c.s = 0;
+          // c.stop();
           if (inter.width == 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
               var inter = intersections_arr[k];
@@ -347,12 +347,12 @@ function drive_cars() {
               counter++;
               if (inter.top == color.traffic.red) {
                 //red
-                // c.s = 0;
-                c.stop();
+                c.s = 0;
+                // c.stop();
               } else {
                 //green
-                // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.s = defaultCar.s;
+                // c.start(defaultCar.s);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -375,8 +375,8 @@ function drive_cars() {
         var c2 = cars[l];
         var dc = c.check_distance(c2, '-x');
         if (dc == true) {
-          // c.s = 0;
-          c.stop();
+          c.s = 0;
+          // c.stop();
           if (inter.height == 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
               var inter = intersections_arr[k];
@@ -414,12 +414,12 @@ function drive_cars() {
               counter++;
               if (inter.right == color.traffic.red) {
                 //red
-                // c.s = 0;
-                c.stop();
+                c.s = 0;
+                // c.stop();
               } else {
                 //green
-                // c.s = defaultCar.s;
-                c.start(defaultCar.s);
+                c.s = defaultCar.s;
+                // c.start(defaultCar.s);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -495,7 +495,9 @@ setInterval(()=>{
   cars[0].showInfo();
   // console.log(roadModel);
   // console.log(intersections_arr[0]);
-  roadModel.showInfo();
+  const roadStat = roadModel.showInfo();
+  const stat = document.getElementById('stat');
+  stat.innerHTML = JSON.stringify(roadStat);
 }, 1000);
 
 function countCars(){
