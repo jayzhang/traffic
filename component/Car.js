@@ -399,6 +399,7 @@ class Car {
       "平均停车等待时间(秒)": (this.waitingTime/this.waitingNum/1000).toFixed(3),
     }
     console.log(JSON.stringify(showObj));
+    return showObj;
   }
 }
 

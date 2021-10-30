@@ -1,6 +1,6 @@
 
 var MaxGreenTime = 100; //绿灯最大时间
-var MinGreenTime = 10;  //绿灯最小时间
+var MinGreenTime = 20;  //绿灯最小时间
 var PopSpeed = 2; // 单方向平均每秒种可以开走多少辆车
 // var PushSpeed = 0.5; // 单方向每秒开进多少辆车
 
@@ -19,7 +19,10 @@ class RoadModel {
     this.greenH = true; //第一、三车道是绿灯
     this.remain = MinGreenTime; 
     this.greenTime = MinGreenTime; 
-    this.redTime = MinGreenTime; 
+    this.redTime = MinGreenTime;
+    this.throughputRate = 0;  //吞吐率
+    this.throughput = 0;  //吞吐量
+    this.averageWaitingTime = 0;  //平均停车时间
   }
   //红绿灯时间到，切换状态
   switchState(){
@@ -78,6 +81,9 @@ class RoadModel {
       "1号车道信号灯": roadModel.greenH ? "绿灯":"红灯",
       "剩余/配置时间(秒)": `${roadModel.remain}/${roadModel.greenH ? roadModel.greenTime:roadModel.redTime}`,
       "水平/垂直待行车辆数": `${roadModel.getNumH()}/${roadModel.getNumV()}`,
+      "吞吐率(辆/分钟)": `${(roadModel.throughput*60).toFixed(6)}`,
+      "吞吐量(辆)": `${roadModel.throughputNum}`,
+      "平均停车等待时间(秒)":  `${(roadModel.averageWaitingTime/1000).toFixed(3)}`,
     };
     console.log(showObj);
     return showObj;
