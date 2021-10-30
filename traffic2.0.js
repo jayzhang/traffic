@@ -23,11 +23,14 @@ if (!ctx.setLineDash) {
 
 // 设置canvas宽高
 let w = document.documentElement.clientWidth,
-  h = document.documentElement.clientHeight;
+  h = document.documentElement.clientHeight;
 // canvas.style.transformOrigin = '0 0';
 // canvas.style.transform = 'scale(0.5,0.5)';
 canvas.width = w;
 canvas.height = h;
+
+document.getElementById('traffic-light').style.top = `${h / 2 - 120}px`;
+document.getElementById('traffic-light').style.left = `${w / 2 - 150}px`;
 
 let roads = [],
   intersections_arr = [],

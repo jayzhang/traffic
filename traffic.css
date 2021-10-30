@@ -63,13 +63,29 @@ input[type="range"]::-webkit-slider-thumb {
 button {
     position: absolute;
 }
-
+#traffic-light {
+    position: fixed;
+    padding: 12px;
+    border-radius: 8px;
+    background: #00A1F3;
+    opacity: .7;
+    color: #d8d8d8;
+    font-size: 12px;
+}
 .static-container {
-    width: 240px;
-    height: 280px;
+    width: 200px;
     background: #fff;
     position: fixed;
     top: 30px;
     left: 24px;
-    padding: 24px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #00A1F3;
+    opacity: .7;
+    color: #d8d8d8;
+    font-size: 12px;
+    /* line-height: 24px; */
+}
+.static-container p {
+    padding: 0;
 }

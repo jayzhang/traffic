@@ -63,10 +63,13 @@ class RoadModel {
       "平均停车等待时间(秒)":  `${(roadModel.averageWaitingTime/1000).toFixed(3)}`,
     };
     document.getElementById('static').innerHTML = Object.keys(showObj).map(key => {
-      return `<p>${key}：${showObj[key]}</p>`
-    }).join('')
-    console.log(showObj);
-    return showObj;
+      return `<p>${key}：${showObj[key]}</p>`
+    }).join('')
+
+    document.getElementById('traffic-light').innerHTML = `<p>剩余时间：${roadModel.remain}</p>`
+    
+    console.log(showObj);
+    return showObj;
   }
 }
 
