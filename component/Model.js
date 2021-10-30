@@ -1,6 +1,6 @@
 
 var MaxGreenTime = 100; //绿灯最大时间
-var MinGreenTime = 5;  //绿灯最小时间
+var MinGreenTime = 10;  //绿灯最小时间
 var PopSpeed = 2; // 单方向平均每秒种可以开走多少辆车
 // var PushSpeed = 0.5; // 单方向每秒开进多少辆车
 
@@ -73,7 +73,14 @@ class RoadModel {
   //   this.vehicleNum2 += pushNum;
   //   console.log(`2 <---${pushNum}辆车，剩余:${this.vehicleNum2}辆车`);
   // }
-
+  showInfo() {
+    const showObj = {
+      "1号车道信号灯": roadModel.greenH ? "绿灯":"红灯",
+      "剩余/配置时间(秒)": `${roadModel.remain}/${roadModel.greenH ? roadModel.greenTime:roadModel.redTime}`,
+      "水平/垂直待行车辆数": `${roadModel.getNumH()}/${roadModel.getNumV()}`,
+    };
+    console.log(showObj);
+  }
 }
 
 const roadModel = new RoadModel();

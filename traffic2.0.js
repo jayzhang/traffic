@@ -7,7 +7,8 @@ import roadModel from './component/Model';
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
-const TotalCars = 60;
+const TotalCars = 1;
+const Speed = 2;
 const policies = [0.1,0.5,0.9];
 const policy = 0;
 
@@ -162,14 +163,16 @@ function drive_cars() {
   for (var i = 0; i < carCount; i++) {
     var c = cars[i];
     // 控制速度
-    c.s = 2;
+    // c.s = Speed;
+    // c.start(Speed);
     if (c.d == 'e') {
       for (var l = 0; l < carCount; l++) {
         var c2 = cars[l];
         var dc = c.check_distance(c2, 'x');
         if (dc == true) {
           // 车辆停止
-          c.s = 0;
+          // c.s = 0;
+          c.stop();
           // 两车道，车辆放置到较少车辆车道
           if (inter.height === 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
@@ -209,10 +212,12 @@ function drive_cars() {
               counter++;
               if (inter.left == color.traffic.red) {
                 //red
-                c.s = 0;
+                // c.s = 0;
+                c.stop();
               } else {
                 //green
-                c.s = defaultCar.s;
+                // c.s = defaultCar.s;
+                c.start(defaultCar.s);
                 //改变方向
                 c.gen_dir(inter);
               }
@@ -228,6 +233,7 @@ function drive_cars() {
       if (c.x + 26 >= canvas.width) {
         //reposition car
         c.x = -1 * defaultCar.l;
+        c.exitNum ++;
       }
       c.x += c.s;
     } else if (c.d == 'n') {
@@ -235,7 +241,8 @@ function drive_cars() {
         var c2 = cars[l];
         var dc = c.check_distance(c2, '-y');
         if (dc == true) {
-          c.s = 0;
+          // c.s = 0;
+          c.stop();
           if (inter.width == 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
               var inter = intersections_arr[k];
@@ -273,10 +280,12 @@ function drive_cars() {
               counter++;
               if (inter.bottom == color.traffic.red) {
                 //red
-                c.s = 0;
+                // c.s = 0;
+                c.stop();
               } else {
                 //green
-                c.s = defaultCar.s;
+                // c.s = defaultCar.s;
+                c.start(defaultCar.s);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -291,6 +300,7 @@ function drive_cars() {
       if (c.y + 26 <= 0) {
         //reposition car
         c.y = h + defaultCar.l;
+        c.exitNum ++;
       }
       c.y -= c.s;
     } else if (c.d == 's') {
@@ -298,7 +308,8 @@ function drive_cars() {
         var c2 = cars[l];
         var dc = c.check_distance(c2, 'y');
         if (dc == true) {
-          c.s = 0;
+          // c.s = 0;
+          c.stop();
           if (inter.width == 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
               var inter = intersections_arr[k];
@@ -336,10 +347,12 @@ function drive_cars() {
               counter++;
               if (inter.top == color.traffic.red) {
                 //red
-                c.s = 0;
+                // c.s = 0;
+                c.stop();
               } else {
                 //green
-                c.s = defaultCar.s;
+                // c.s = defaultCar.s;
+                c.start(defaultCar.s);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -354,6 +367,7 @@ function drive_cars() {
       if (c.y - 26 >= h) {
         //reposition car
         c.y = -1 * defaultCar.l;
+        c.exitNum ++;
       }
       c.y += c.s;
     } else if (c.d == 'w') {
@@ -361,7 +375,8 @@ function drive_cars() {
         var c2 = cars[l];
         var dc = c.check_distance(c2, '-x');
         if (dc == true) {
-          c.s = 0;
+          // c.s = 0;
+          c.stop();
           if (inter.height == 80) {
             for (var k = 0; k < intersections_arr.length; k++) {
               var inter = intersections_arr[k];
@@ -399,10 +414,12 @@ function drive_cars() {
               counter++;
               if (inter.right == color.traffic.red) {
                 //red
-                c.s = 0;
+                // c.s = 0;
+                c.stop();
               } else {
                 //green
-                c.s = defaultCar.s;
+                // c.s = defaultCar.s;
+                c.start(defaultCar.s);
                 //figure dir
                 c.gen_dir(inter);
               }
@@ -418,6 +435,7 @@ function drive_cars() {
       if (c.x + 26 <= 0) {
         //reposition car
         c.x = w + defaultCar.l;
+        c.exitNum ++;
       }
       c.x -= c.s;
     }
@@ -474,13 +492,14 @@ setInterval(()=>{
   if (roadModel.remain === 0) { //剩余时间到，改变红灯状态
     roadModel.switchState();
   }
+  cars[0].showInfo();
   // console.log(roadModel);
   // console.log(intersections_arr[0]);
-  console.log(`水平方向红绿灯: ${roadModel.greenH ? "绿灯":"红灯"}, 剩余时间:${roadModel.remain}秒，水平/垂直方向绿灯时间配置:${roadModel.greenTime}/${roadModel.redTime}, 等待车流量:${roadModel.getNumH()}/${roadModel.getNumV()}`);
+  roadModel.showInfo();
 }, 1000);
 
 function countCars(){
-  // console.log(cars[0]);
+  
   roadModel.numE = 0;
   roadModel.numW = 0;
   roadModel.numS = 0;
