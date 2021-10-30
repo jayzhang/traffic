@@ -7,7 +7,7 @@ import roadModel from './component/Model';
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
-const TotalCars = 30;
+const TotalCars = 40;
 const Speed = 2;
 const policies = [0.1,0.5,0.9];
 const policy = 0;

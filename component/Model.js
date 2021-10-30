@@ -54,10 +54,11 @@ class RoadModel {
   }
   showInfo() {
     const showObj = {
-      "1号车道信号灯": roadModel.greenH ? "绿灯":"红灯",
-      "剩余/配置时间(秒)": `${roadModel.remain}/${roadModel.greenH ? roadModel.greenTime:roadModel.redTime}`,
+      "1号车道信号灯": roadModel.greenH ? '<font color="green">绿灯</font>':'<font color="red">红灯</font>',
+      "<b>剩余时间(秒)</b>": `<b>${roadModel.remain}</b>`,
+      "<b>配置时间(秒)</b>": `<b>${roadModel.greenH ? roadModel.greenTime:roadModel.redTime}</b>`,
       "水平/垂直待行车辆数": `${roadModel.getNumH()}/${roadModel.getNumV()}`,
-      "吞吐率(辆/分钟)": `${(roadModel.throughput*60).toFixed(6)}`,
+      "吞吐率(辆/分钟)": `${(roadModel.throughput*60).toFixed(3)}`,
       "吞吐量(辆)": `${roadModel.throughputNum}`,
       "平均停车等待时间(秒)":  `${(roadModel.averageWaitingTime/1000).toFixed(3)}`,
     };
