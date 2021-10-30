@@ -2,7 +2,7 @@
 
 本项目通过web方式进行模拟十字路口道路拥挤状况，实现红绿灯时长智能调控算法，优化通行吞吐率，提升通行效率。
 
-本项目基于[codepen](https://codepen.io/motorlatitude/pen/grdtj)进行二次开发，定制部分包括：
+本项目是基于[codepen](https://codepen.io/motorlatitude/pen/grdtj)二次开发的源码[codepen](https://github.com/RainWangjie/canvas-traffic)的基础上进行的三次开发，定制部分包括：
 - 车辆按照指定概率随机从4个车道驶入
 - 红绿灯时间按照智能算法动态调整
 - 提供单个十字路口的通行效率统计信息
