@@ -19,13 +19,17 @@ export const addRoundedRect = ctx => {
 };
 
 export const defaultCar = {
-  x: 0,
-  y: 0,
-  s: 1,
+  x: 0, //水平位置，最左边是0，最右边是屏幕宽度
+  y: 0, //垂直位置，最上边是0，最下面是屏幕
+  s: 1, //速度
   l: 25, //length of vehicle
   d: 'e',
   dd: false,
-  color: '#F5D600'
+  color: '#F5D600',
+  waitingTime:0,// 停车等待总时长
+  waitingNum:0, // 停车等待次数
+  exitNum:0, //驶出次数，用于计算通行流速（一段时间内，所有车的驶出次数）
+  recentStopStartTime: 0, //最近一次开始等待红灯的时间戳，用于计算当前红灯等待时间
 };
 
 class Car {
@@ -34,6 +38,7 @@ class Car {
       this[key] = defaultCar[key];
     }
   }
+
   // 俩车距离确认
   check_distance(car, axis) {
     let c1 = this,
@@ -360,6 +365,40 @@ class Car {
       ctx.fillRect(this.y + 6, -this.x + 12, 2, 2);
       ctx.rotate(-Math.PI / 2);
     }
+  }
+
+  stop(){
+    if(this.s > 0) { //行->停
+      this.recentStopStartTime = new Date().getTime();
+      this.waitingNum ++;
+    }
+    this.s = 0;
+  }
+
+  start(speed) {
+    if(speed > 0) {
+      if(this.s === 0) { //停->行
+        if(this.recentStopStartTime > 0) {
+          const now = new Date().getTime();
+          const waitingTime = now - this.recentStopStartTime;
+          this.waitingTime += waitingTime;
+        }
+      }
+    }
+    this.s = speed;
+  }
+
+  showInfo(){
+    const showObj = {
+      "位置": `(${this.x},${this.y})`,
+      "速度": this.s,
+      "方向": this.d,
+      "驶出次数": this.exitNum,
+      "停车次数": this.waitingNum,
+      "停车总时长(秒)": (this.waitingTime/1000).toFixed(3),
+      "平均停车等待时间(秒)": (this.waitingTime/this.waitingNum/1000).toFixed(3),
+    }
+    console.log(JSON.stringify(showObj));
   }
 }
 
