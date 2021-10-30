@@ -38,7 +38,7 @@ const roadConfig = [
     x: 0,
     y: h / 2 - 40,
     width: w,
-    height: 160,
+    height: 80,
     direction: 'h',
     num: 2,
     carNum: 0
@@ -46,7 +46,7 @@ const roadConfig = [
   {
     x: w / 2 - 40,
     y: 0,
-    width: 160,
+    width: 80,
     height: h,
     direction: 'v',
     num: 2,
