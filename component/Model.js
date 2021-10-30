@@ -1,8 +1,10 @@
 
 var MaxGreenTime = 100; //绿灯最大时间
-var MinGreenTime = 20;  //绿灯最小时间
+var MinGreenTime = 5;  //绿灯最小时间
 var PopSpeed = 2; // 单方向平均每秒种可以开走多少辆车
 // var PushSpeed = 0.5; // 单方向每秒开进多少辆车
+const controlPolicy = true;
+const normalGreenTime = 15;
 
 class RoadModel {
   // lightColor = "green"; ，为了简化，只保留两种颜色: red,green
@@ -29,13 +31,15 @@ class RoadModel {
     if (this.greenH) {
       var numV = Math.max(this.numS,this.numN);
       var needTime = numV /PopSpeed;
-      this.redTime = this.rangedTime(needTime);
+      var result = controlPolicy ? this.rangedTime(needTime) : normalGreenTime;
+      this.redTime = result;
       this.remain = this.redTime;
       console.log(`垂直方向最大车辆数:${numV}, 设置垂直方向绿灯时间:${this.redTime}`);
     } else {
       var numH = Math.max(this.numE,this.numW);
       var needTime = numH / PopSpeed;
-      this.greenTime = this.rangedTime(needTime);
+      var result = controlPolicy ? this.rangedTime(needTime) : normalGreenTime;
+      this.greenTime = result;
       this.remain = this.greenTime;
       console.log(`水平方向最大车辆数:${numH}, 设置水平方向绿灯时间:${this.greenTime}`);
     }

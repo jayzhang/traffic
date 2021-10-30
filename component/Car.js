@@ -30,6 +30,7 @@ export const defaultCar = {
   waitingNum:0, // 停车等待次数
   exitNum:0, //驶出次数，用于计算通行流速（一段时间内，所有车的驶出次数）
   recentStopStartTime: 0, //最近一次开始等待红灯的时间戳，用于计算当前红灯等待时间
+  state: 1,// 0-停止 1-开动
 };
 
 class Car {
@@ -368,16 +369,17 @@ class Car {
   }
 
   stop(){
-    if(this.s > 0) { //行->停
+    if(this.state === 1) { //行->停
       this.recentStopStartTime = new Date().getTime();
       this.waitingNum ++;
     }
     this.s = 0;
+    this.state = 0;
   }
 
   start(speed) {
     if(speed > 0) {
-      if(this.s === 0) { //停->行
+      if(this.state === 0) { //停->行
         if(this.recentStopStartTime > 0) {
           const now = new Date().getTime();
           const waitingTime = now - this.recentStopStartTime;
@@ -386,12 +388,14 @@ class Car {
       }
     }
     this.s = speed;
+    this.state = 1;
   }
 
   showInfo(){
     const showObj = {
       "位置": `(${this.x},${this.y})`,
       "速度": this.s,
+      "停车状态": this.state===0 ? "停止":"运行",
       "方向": this.d,
       "驶出次数": this.exitNum,
       "停车次数": this.waitingNum,

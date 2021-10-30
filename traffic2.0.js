@@ -7,7 +7,7 @@ import roadModel from './component/Model';
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
-const TotalCars = 5;
+const TotalCars = 30;
 const Speed = 2;
 const policies = [0.1,0.5,0.9];
 const policy = 0;
@@ -163,8 +163,8 @@ function drive_cars() {
   for (var i = 0; i < carCount; i++) {
     var c = cars[i];
     // 控制速度
-    // c.s = Speed;
-    c.start(Speed);
+    c.s = Speed;
+    // c.start(Speed);
     if (c.d == 'e') {
       for (var l = 0; l < carCount; l++) {
         var c2 = cars[l];
@@ -494,10 +494,12 @@ setInterval(()=>{
   if (roadModel.remain === 0) { //剩余时间到，改变红灯状态
     roadModel.switchState();
   }
-  const carInfo = cars[0].showInfo();
+  // const carInfo = cars[0].showInfo();
   const roadStat = roadModel.showInfo();
   const stat = document.getElementById('stat');
-  stat.innerHTML = JSON.stringify(roadStat) + "<br>" + JSON.stringify(carInfo);
+  stat.innerHTML = `<pre>${JSON.stringify(roadStat, null, 4)}</pre>`;
+  // stat.innerHTML = "平均等待时间:" + (roadModel.averageWaitingTime/1000).toFixed(3) + "秒<br>";
+  // stat.innerHTML += "吞吐率:" + (roadModel.throughputRate).toFixed(3) + "辆/分钟<br>";
 }, 1000);
 
 function countCars(){
@@ -525,7 +527,11 @@ function countCars(){
     totalWaitingTime += car.waitingTime;
     totalWaitingNum += car.waitingNum;
   }
+  const totalTimeMs = new Date().getTime() - startTime;
   roadModel.averageWaitingTime = totalWaitingTime/totalWaitingNum;
   roadModel.throughputNum = totalExistNum;
-  roadModel.throughput = totalExistNum * 1000/(new Date().getTime() - startTime);
+  roadModel.throughput = totalExistNum * 1000/totalTimeMs;
+  // if (totalTimeMs >= 180) {
+  //   isPlay = false;
+  // }
 }
