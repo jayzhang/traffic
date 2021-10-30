@@ -7,10 +7,12 @@ import roadModel from './component/Model';
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
-const TotalCars = 40;
+const TotalCars = 50;
 const Speed = 2;
-const policies = [0.1,0.5,0.9];
-const policy = 0;
+const ProbsH = [0.4,0.1,0.4,0.1];
+// const ProbsV = [0.2,0.3,0.2,0.3];
+const ProbsV = [0.4,0.1,0.4,0.1];
+let Probs = ProbsH;
 
 addRoundedRect(ctx);
 
@@ -36,7 +38,7 @@ let roads = [],
   intersections_arr = [],
   cars = [];
 
-const roadConfig = [
+const RoadConfigs = [
   {
     x: 0,
     y: h / 2 - 40,
@@ -54,31 +56,8 @@ const roadConfig = [
     direction: 'v',
     num: 2,
     carNum: 0
-  },
-  // {
-  //   x: 450,
-  //   y: 200,
-  //   width: 40,
-  //   height: h - 200,
-  //   direction: 'v'
-  // },
-  // {
-  //   x: 120,
-  //   y: 0,
-  //   width: 80,
-  //   height: h,
-  //   direction: 'v'
-  // },
-  // {
-  //   x: 0,
-  //   y: h / 2 + 240,
-  //   width: w,
-  //   height: 40,
-  //   direction: 'h'
-  // }
+  }
 ];
-
-
 
 // 初始化
 function init() {
@@ -93,44 +72,15 @@ function init() {
   const car_no = TotalCars;
   for (let i = 0; i < car_no; i++) {
     let car = new Car();
-    const random = Math.random();
-    const roadIndex = random > policies[policy] ? 1 : 0;
-    let randomRoad = roadConfig[roadIndex];
-    randomRoad.carNum += 1;
-    const { direction, x, y, width, height } = randomRoad;
-
-    if (direction === 'h') {
-      car.x = x + width + defaultCar.l;
-      car.y = y + height / 2 - 17;
-      car.d = 'w';
-    } else {
-      car.x = x + width / 2 + 17;
-      car.y = y + height + defaultCar.l;
-      car.d = 'n';
-    }
-
-    let color_rand = Math.random();
-    let color = '';
-    if (color_rand < 0.2) {
-      color = '#fff';
-    } else if (color_rand > 0.2 && color_rand < 0.4) {
-      color = '#E22322';
-    } else if (color_rand > 0.4 && color_rand < 0.6) {
-      color = '#F9D111';
-    } else if (color_rand > 0.6 && color_rand < 0.8) {
-      color = '#367C94';
-    } else if (color_rand > 0.8 && color_rand < 1) {
-      color = '#222';
-    }
-    car.color = color;
+    car.randomizeStartPoint(RoadConfigs, Probs);
     cars.push(car);
   }
 
   // 生成road
-  roads = roadConfig.map(config => new Road(config));
+  roads = RoadConfigs.map(config => new Road(config));
 
   // 生成路口
-  intersections_arr = Intersections(roadConfig);
+  intersections_arr = Intersections(RoadConfigs);
 }
 
 // 绘制场景
@@ -234,7 +184,8 @@ function drive_cars() {
       // 车辆已驶出屏幕，重置位置
       if (c.x + 26 >= canvas.width) {
         //reposition car
-        c.x = -1 * defaultCar.l;
+        // c.x = -1 * defaultCar.l;
+        c.randomizeStartPoint(RoadConfigs, Probs);
         c.exitNum ++;
       }
       c.x += c.s;
@@ -301,7 +252,8 @@ function drive_cars() {
       }
       if (c.y + 26 <= 0) {
         //reposition car
-        c.y = h + defaultCar.l;
+        // c.y = h + defaultCar.l;
+        c.randomizeStartPoint(RoadConfigs, Probs);
         c.exitNum ++;
       }
       c.y -= c.s;
@@ -368,7 +320,8 @@ function drive_cars() {
       }
       if (c.y - 26 >= h) {
         //reposition car
-        c.y = -1 * defaultCar.l;
+        // c.y = -1 * defaultCar.l;
+        c.randomizeStartPoint(RoadConfigs, Probs);
         c.exitNum ++;
       }
       c.y += c.s;
@@ -436,7 +389,8 @@ function drive_cars() {
       // 车辆离开视图
       if (c.x + 26 <= 0) {
         //reposition car
-        c.x = w + defaultCar.l;
+        // c.x = w + defaultCar.l;
+        c.randomizeStartPoint(RoadConfigs, Probs);
         c.exitNum ++;
       }
       c.x -= c.s;
@@ -463,8 +417,8 @@ function genRoadCarNum() {
     }
   })
 
-  roadConfig[1].carNum = vCarNum;
-  roadConfig[0].carNum = hCarNum;
+  RoadConfigs[1].carNum = vCarNum;
+  RoadConfigs[0].carNum = hCarNum;
 }
 
 // 控制车辆开始运动
@@ -497,13 +451,17 @@ setInterval(()=>{
   if (roadModel.remain === 0) { //剩余时间到，改变红灯状态
     roadModel.switchState();
   }
-  // const carInfo = cars[0].showInfo();
-  const roadStat = roadModel.showInfo();
-  // const stat = document.getElementById('stat');
-  // stat.innerHTML = `<pre>${JSON.stringify(roadStat, null, 4)}</pre>`;
-  // stat.innerHTML = "平均等待时间:" + (roadModel.averageWaitingTime/1000).toFixed(3) + "秒<br>";
-  // stat.innerHTML += "吞吐率:" + (roadModel.throughputRate).toFixed(3) + "辆/分钟<br>";
+  roadModel.showInfo();
 }, 1000);
+
+setInterval(()=>{
+   if(Probs === ProbsH) {
+    Probs = ProbsV;
+   }
+   else {
+    Probs = ProbsH;
+   }
+}, 60000);
 
 function countCars(){
   roadModel.numE = 0;
@@ -534,7 +492,8 @@ function countCars(){
   roadModel.averageWaitingTime = totalWaitingTime/totalWaitingNum;
   roadModel.throughputNum = totalExistNum;
   roadModel.throughput = totalExistNum * 1000/totalTimeMs;
-  // if (totalTimeMs >= 180) {
-  //   isPlay = false;
-  // }
+  roadModel.totalTime = Math.round(totalTimeMs/1000);
+  if(roadModel.totalTime >= 240) {
+    isPlay = false;
+  }
 }

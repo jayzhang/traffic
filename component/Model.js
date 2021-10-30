@@ -1,6 +1,6 @@
 
 var MaxGreenTime = 100; //绿灯最大时间
-var MinGreenTime = 5;  //绿灯最小时间
+var MinGreenTime = 2;  //绿灯最小时间
 var PopSpeed = 2; // 单方向平均每秒种可以开走多少辆车
 // var PushSpeed = 0.5; // 单方向每秒开进多少辆车
 const controlPolicy = true;
@@ -19,6 +19,7 @@ class RoadModel {
     this.throughputRate = 0;  //吞吐率
     this.throughput = 0;  //吞吐量
     this.averageWaitingTime = 0;  //平均等待时间
+    this.totalTime = 0;
   }
   //红绿灯时间到，切换状态
   switchState(){
@@ -54,6 +55,7 @@ class RoadModel {
   }
   showInfo() {
     const showObj = {
+      "系统运行时间(秒)": roadModel.totalTime,
       "1号车道信号灯": roadModel.greenH ? '<font color="green">绿灯</font>':'<font color="red">红灯</font>',
       "<b>剩余时间(秒)</b>": `<b>${roadModel.remain}</b>`,
       "<b>配置时间(秒)</b>": `<b>${roadModel.greenH ? roadModel.greenTime:roadModel.redTime}</b>`,

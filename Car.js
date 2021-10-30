@@ -405,6 +405,56 @@ class Car {
     console.log(JSON.stringify(showObj));
     return showObj;
   }
+
+  randomizeStartPoint(roadConfigs, probabilities){
+    const randomNumber = Math.random();
+    if(randomNumber < probabilities[0]){
+      //lane1
+      const roadConfig = roadConfigs[0];
+      roadConfig.carNum += 1;
+      this.x = roadConfig.x - defaultCar.l;
+      this.y = roadConfig.y + roadConfig.height / 2 + 17;
+      this.d = 'e';
+    }
+    else if(randomNumber < probabilities[0] + probabilities[1]) {
+      //lane2
+      const roadConfig = roadConfigs[1];
+      roadConfig.carNum += 1;
+      this.x = roadConfig.x + roadConfig.width / 2 + 17;
+      this.y = roadConfig.y + roadConfig.height + defaultCar.l;
+      this.d = 'n';
+    }
+    else if(randomNumber < probabilities[0] + probabilities[1] + probabilities[2]) {
+      //lane3
+      const roadConfig = roadConfigs[0];
+      roadConfig.carNum += 1;
+      this.x = roadConfig.x + roadConfig.width + defaultCar.l;
+      this.y = roadConfig.y + roadConfig.height / 2 - 17;
+      this.d = 'w';
+    }
+    else {
+      //lane4
+      const roadConfig = roadConfigs[1];
+      roadConfig.carNum += 1;
+      this.x = roadConfig.x + roadConfig.width / 2 - 17;
+      this.y = roadConfig.y - defaultCar.l;
+      this.d = 's';
+    }
+    let color_rand = Math.random();
+    let color = '';
+    if (color_rand < 0.2) {
+      color = '#fff';
+    } else if (color_rand > 0.2 && color_rand < 0.4) {
+      color = '#E22322';
+    } else if (color_rand > 0.4 && color_rand < 0.6) {
+      color = '#F9D111';
+    } else if (color_rand > 0.6 && color_rand < 0.8) {
+      color = '#367C94';
+    } else if (color_rand > 0.8 && color_rand < 1) {
+      color = '#222';
+    }
+    this.color = color;
+  }
 }
 
 export default Car;
