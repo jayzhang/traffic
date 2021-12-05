@@ -24,6 +24,14 @@ export class Crossroad {
     }
   }
 
+  xRange (){
+    return {min: this.x - this.width/2, max: this.x + this.width/2};
+  }
+
+  yRange() {
+    return {min: this.y - this.height/2, max: this.y + this.height/2};
+  }
+
   // 重绘路口
   drawRoad(ctx, x, y, w, h) {
     ctx.fillStyle = color.road;

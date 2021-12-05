@@ -34,72 +34,32 @@ export class Vehicle {
     return false;
   }
 
-  // 车与路口关系
-  isIntersection(inter, axis) {
-    let c = this;
-    if (axis == 'x') {
-      if (inter.height > 40) {
-        if (inter.x - c.x > c.length + 8 && inter.x - c.x <= c.length + 25) {
-          if (c.y - 80 <= inter.y && c.y + 42 >= inter.y) {
-            return true;
-          }
-        }
-      } else {
-        if (inter.x - c.x > c.length + 8 && inter.x - c.x <= c.length + 25) {
-          if (c.y - 40 <= inter.y && c.y + 42 >= inter.y) {
-            return true;
-          }
-        }
-      }
-    } else if (axis == '-x') {
-      if (inter.height > 40) {
-        if (c.x - inter.x > c.length + 8 && c.x - inter.x <= c.length + inter.width + 5) {
-          if (c.y - 80 <= inter.y && c.y + 42 >= inter.y) {
-            return true;
-          }
-        }
-      } else {
-        if (c.x - inter.x > c.length + 8 && c.x - inter.x <= c.length + inter.width + 5) {
-          if (c.y - 40 <= inter.y && c.y + 42 >= inter.y) {
-            return true;
-          }
-        }
-      }
-    } else if (axis == '-y') {
-      if (inter.width > 40) {
-        if (
-          c.y - inter.y > c.length + 8 &&
-          c.y - inter.y <= c.length + inter.height + 5
-        ) {
-          if (c.x - 80 <= inter.x && c.x + 42 >= inter.x) {
-            return true;
-          }
-        }
-      } else {
-        if (
-          c.y - inter.y > c.length + 8 &&
-          c.y - inter.y <= c.length + inter.height + 5
-        ) {
-          if (c.x - 40 <= inter.x && c.x + 42 >= inter.x) {
-            return true;
-          }
-        }
-      }
-    } else if (axis == 'y') {
-      if (inter.width > 40) {
-        if (inter.y - c.y > c.length + 8 && inter.y - c.y <= c.length + 27) {
-          if (c.x - 80 <= inter.x && c.x + 42 >= inter.x) {
-            return true;
-          }
-        }
-      } else {
-        if (inter.y - c.y > c.length + 8 && inter.y - c.y <= c.length + 27) {
-          if (c.x - 40 <= inter.x && c.x + 42 >= inter.x) {
-            return true;
-          }
-        }
-      }
+  headPosition() {
+    if(this.direction === 'e') {
+      return {x:this.x + this.length/2, y:this.y};
     }
+    else if(this.direction === 'w'){
+      return {x:this.x - this.length/2, y:this.y};
+    }
+    else if(this.direction === 's'){
+      return {x:this.x, y:this.y + this.width/2};
+    }
+    else if(this.direction === 'n'){
+      return {x:this.x, y:this.y - this.width/2};
+    }
+  }
+
+
+  // 车辆是否进入十字路口?
+  isIntersection(cross) {
+    const headPosition = this.headPosition();
+    const xRange = cross.xRange();
+    const yRange = cross.yRange();
+    //车头位置处于十字路口矩形框范围内
+    if(headPosition.x >= xRange.min && headPosition.x <= xRange.max && headPosition.y >= yRange.min && headPosition.y <= yRange.max) {
+      return true;
+    }
+    return false;
   }
 
   // 车辆在路口转弯
