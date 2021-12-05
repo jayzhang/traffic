@@ -1,100 +1,51 @@
-/**
- * 左上角信息展示面板
- */
-export const addRoundedRect = ctx => {
-  Object.getPrototypeOf(ctx).rounded_rect = function(x, y, w, h, r) {
-    if (typeof r === 'undefined') {
-      r = 2;
-    }
-    this.beginPath();
-    this.moveTo(x + r, y);
-    this.lineTo(x + w - r, y);
-    this.quadraticCurveTo(x + w, y, x + w, y + r);
-    this.lineTo(x + w, y + h - r);
-    this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    this.lineTo(x + r, y + h);
-    this.quadraticCurveTo(x, y + h, x, y + h - r);
-    this.lineTo(x, y + r);
-    this.quadraticCurveTo(x, y, x + r, y);
-    this.closePath();
-    this.fill();
-  };
-};
+const SAFE_DIST = 15;
 
-export const defaultCar = {
-  x: 0, //水平位置，最左边是0，最右边是屏幕宽度
-  y: 0, //垂直位置，最上边是0，最下面是屏幕
-  s: 1, //速度
-  l: 25, //length of vehicle
-  d: 'e',
-  dd: false,
-  color: '#F5D600',
-  waitingTime:0,// 停车等待总时长
-  waitingNum:0, // 停车等待次数
-  exitNum:0, //驶出次数，用于计算通行流速（一段时间内，所有车的驶出次数）
-  recentStopStartTime: 0, //最近一次开始等待红灯的时间戳，用于计算当前红灯等待时间
-  state: 1,// 0-停止 1-开动
-};
-
-class Car {
+export class Vehicle {
   constructor() {
-    for (let key in defaultCar) {
-      this[key] = defaultCar[key];
-    }
+    this.x = 0; //水平位置，最左边是0，最右边是屏幕宽度
+    this.y = 0; //垂直位置，最上边是0，最下面是屏幕高度
+    this.speed = 1; //速度
+    this.length = 25; //车辆长度
+    this.width = 12; //车辆宽度，当车辆中心点位置是0,0的时候，假设车辆自西向东开，车辆所在矩形的范围是(x-l/2, x+l/2) (y-w/2, y+w/2)
+    this.direction = 'e'; // 车辆行驶方向: e,w,s,n
+    this.dd = false; //车辆是否已经经过路口
+    this.color = '#F5D600';
+    this.waitingTime = 0;// 停车等待总时长
+    this.waitingNum = 0; // 停车等待次数
+    this.exitNum = 0; //驶出次数，用于计算通行流速（一段时间内，所有车的驶出次数）
+    this.recentStopStartTime = 0; //最近一次开始等待红灯的时间戳，用于计算当前红灯等待时间
+    this.state = 1; // 0-停止 1-开动
   }
 
-  // 俩车距离确认
-  check_distance(car, axis) {
-    let c1 = this,
-      c2 = car;
-    if (axis == 'x') {
-      var dist = c2.x - c1.x;
-      if (dist > 0 && dist <= c1.l + 15) {
-        if (c2.w > 15 && c1.w > 15 && c1.y == c2.y) {
-          //only check for collison on cars on the same axis
-          return true;
-        }
-      }
-    } else if (axis == '-x') {
-      var dist = c1.x - c2.x;
-      if (dist > 0 && dist <= c1.l + 15) {
-        if (c2.w > 15 && c1.w > 15 && c1.y == c2.y) {
-          //only check for collison on cars on the same axis
-          return true;
-        }
-      }
-    } else if (axis == '-y') {
-      var disty = c1.y - c2.y;
-      if (disty > 0 && disty <= c1.l + 15) {
-        if (c2.w < 25 && c1.w < 25 && c1.x == c2.x) {
-          //only check for collison on cars on the same axis
-          return true;
-        }
-      }
-    } else if (axis == 'y') {
-      var disty = c2.y - c1.y;
-      if (disty > 0 && disty <= c1.l + 15) {
-        if (c2.w < 25 && c1.w < 25 && c1.x == c2.x) {
-          //only check for collison on cars on the same axis
-          return true;
-        }
+  //检测车辆是否与另一辆车碰撞
+  isCollision(other) {
+    const c1 = this;
+    const c2 = other;
+    if (c1.direction === c2.direction) {
+      const minDist = (c1.length + c2.length)/2 + SAFE_DIST;
+      if (c1.x === c2.x) {
+        const dist = Math.abs(c1.y, c2.y);
+        return dist <= minDist;
+      } else if(c1.y === c2.y) {
+        const dist = Math.abs(c1.x, c2.x);
+        return dist <= minDist;
       }
     }
     return false;
   }
 
   // 车与路口关系
-  check_inter(inter, axis) {
+  isIntersection(inter, axis) {
     let c = this;
     if (axis == 'x') {
       if (inter.height > 40) {
-        if (inter.x - c.x > c.l + 8 && inter.x - c.x <= c.l + 25) {
+        if (inter.x - c.x > c.length + 8 && inter.x - c.x <= c.length + 25) {
           if (c.y - 80 <= inter.y && c.y + 42 >= inter.y) {
             return true;
           }
         }
       } else {
-        if (inter.x - c.x > c.l + 8 && inter.x - c.x <= c.l + 25) {
+        if (inter.x - c.x > c.length + 8 && inter.x - c.x <= c.length + 25) {
           if (c.y - 40 <= inter.y && c.y + 42 >= inter.y) {
             return true;
           }
@@ -102,13 +53,13 @@ class Car {
       }
     } else if (axis == '-x') {
       if (inter.height > 40) {
-        if (c.x - inter.x > c.l + 8 && c.x - inter.x <= c.l + inter.width + 5) {
+        if (c.x - inter.x > c.length + 8 && c.x - inter.x <= c.length + inter.width + 5) {
           if (c.y - 80 <= inter.y && c.y + 42 >= inter.y) {
             return true;
           }
         }
       } else {
-        if (c.x - inter.x > c.l + 8 && c.x - inter.x <= c.l + inter.width + 5) {
+        if (c.x - inter.x > c.length + 8 && c.x - inter.x <= c.length + inter.width + 5) {
           if (c.y - 40 <= inter.y && c.y + 42 >= inter.y) {
             return true;
           }
@@ -117,8 +68,8 @@ class Car {
     } else if (axis == '-y') {
       if (inter.width > 40) {
         if (
-          c.y - inter.y > c.l + 8 &&
-          c.y - inter.y <= c.l + inter.height + 5
+          c.y - inter.y > c.length + 8 &&
+          c.y - inter.y <= c.length + inter.height + 5
         ) {
           if (c.x - 80 <= inter.x && c.x + 42 >= inter.x) {
             return true;
@@ -126,8 +77,8 @@ class Car {
         }
       } else {
         if (
-          c.y - inter.y > c.l + 8 &&
-          c.y - inter.y <= c.l + inter.height + 5
+          c.y - inter.y > c.length + 8 &&
+          c.y - inter.y <= c.length + inter.height + 5
         ) {
           if (c.x - 40 <= inter.x && c.x + 42 >= inter.x) {
             return true;
@@ -136,13 +87,13 @@ class Car {
       }
     } else if (axis == 'y') {
       if (inter.width > 40) {
-        if (inter.y - c.y > c.l + 8 && inter.y - c.y <= c.l + 27) {
+        if (inter.y - c.y > c.length + 8 && inter.y - c.y <= c.length + 27) {
           if (c.x - 80 <= inter.x && c.x + 42 >= inter.x) {
             return true;
           }
         }
       } else {
-        if (inter.y - c.y > c.l + 8 && inter.y - c.y <= c.l + 27) {
+        if (inter.y - c.y > c.length + 8 && inter.y - c.y <= c.length + 27) {
           if (c.x - 40 <= inter.x && c.x + 42 >= inter.x) {
             return true;
           }
@@ -158,11 +109,11 @@ class Car {
     if (c.dd) return;
 
     var rand_dir = Math.random() * 10;
-    var dir = c.d;
+    var dir = c.direction;
     c.dd = true;
     var rand_no1 = 0,
       rand_no2 = 0;
-    if (c.d == 'e') {
+    if (c.direction == 'e') {
       if (inter.width < 80) {
         rand_no1 = 2;
         rand_no2 = 5;
@@ -173,12 +124,12 @@ class Car {
       if (rand_dir < rand_no1) {
         if (inter.roadbottom == true) {  //右转 30% 概率
           var dir = 's';
-          c.d = 's';
+          c.direction = 's';
           c.x = inter.x + 10;
           c.y = inter.y + inter.height - 27;
         } else {  //直行
           if (inter.roadright == true) {
-            var dir = c.d;
+            var dir = c.direction;
           } else {
             //turn
           }
@@ -186,28 +137,28 @@ class Car {
       } else if (rand_dir > 3 && rand_dir < rand_no2) {
         if (inter.roadtop == true) { //左转 30% 概率
           var dir = 'n';
-          c.d = 'n';
+          c.direction = 'n';
           c.x = inter.x + inter.width - 9;
-          c.y = inter.y + c.l + 2;
+          c.y = inter.y + c.length + 2;
         } else {  //直行
           if (inter.roadright == true) {
-            var dir = c.d;
+            var dir = c.direction;
           } else {
             //turn
           }
         }
       } else {
         if (inter.roadright == true) { //直行 40% 概率
-          var dir = c.d;
+          var dir = c.direction;
         } else {   //右转
           //turn
           var dir = 's';
-          c.d = 's';
+          c.direction = 's';
           c.x = inter.x + 10;
           c.y = inter.y + 2;
         }
       }
-    } else if (c.d == 'w') {
+    } else if (c.direction == 'w') {
       if (inter.width < 80) {
         rand_no1 = 2;
         rand_no2 = 5;
@@ -218,12 +169,12 @@ class Car {
       if (rand_dir < rand_no1) {
         if (inter.roadbottom == true) {
           var dir = 's';
-          c.d = 's';
+          c.direction = 's';
           c.x = inter.x + 20;
-          c.y = inter.y + inter.height + c.l + 2;
+          c.y = inter.y + inter.height + c.length + 2;
         } else {
           if (inter.roadleft == true) {
-            var dir = c.d;
+            var dir = c.direction;
           } else {
             //turn
           }
@@ -231,32 +182,32 @@ class Car {
       } else if (rand_dir > 3 && rand_dir < rand_no2) {
         if (inter.roadtop == true) {
           var dir = 'n';
-          c.d = 'n';
+          c.direction = 'n';
           c.x = inter.x + inter.width + 1;
-          c.y = inter.y + c.l - 30;
+          c.y = inter.y + c.length - 30;
         } else {
           if (inter.roadleft == true) {
-            var dir = c.d;
+            var dir = c.direction;
           } else {
             //turn
           }
         }
       } else {
         if (inter.roadleft == true) {
-          var dir = c.d;
+          var dir = c.direction;
         } else {
           //turn
           var dir = 'n';
-          c.d = 'n';
+          c.direction = 'n';
           c.x = inter.x + inter.width + 1;
-          c.y = inter.y + c.l + 2;
+          c.y = inter.y + c.length + 2;
         }
       }
-    } else if (c.d == 'n') {
+    } else if (c.direction == 'n') {
       if (rand_dir < 3) {
         if (inter.roadright == true) {
           var dir = 'e';
-          c.d = 'e';
+          c.direction = 'e';
           c.y = inter.y + inter.height - 10;
           c.x = inter.x + inter.width + 1;
         } else {
@@ -264,60 +215,60 @@ class Car {
       } else if (rand_dir > 3 && rand_dir < 6) {
         if (inter.roadleft == true) {
           var dir = 'w';
-          c.d = 'w';
+          c.direction = 'w';
           c.y = inter.y + 8;
           c.x = inter.x + 5;
         } else {
         }
       } else {
         if (inter.roadtop == true) {
-          var dir = c.d;
+          var dir = c.direction;
         } else {
           //turn
           var dir = 'w';
-          c.d = 'w';
+          c.direction = 'w';
           c.y = inter.y + 8;
           c.x = inter.x + 5;
         }
       }
-    } else if (c.d == 's') {
+    } else if (c.direction == 's') {
       if (rand_dir < 3) {
         if (inter.roadright == true) {
           var dir = 'e';
-          c.d = 'e';
+          c.direction = 'e';
           c.y = inter.y + inter.height - 21;
           c.x = inter.x + inter.width + 1;
         } else {
           if (inter.roadbottom == true) {
-            var dir = c.d;
+            var dir = c.direction;
           } else {
             //turn
-            c.s = 0;
+            c.speed = 0;
           }
         }
       } else if (rand_dir > 3 && rand_dir < 6) {
         if (inter.roadleft == true) {
           var dir = 'w';
-          c.d = 'w';
+          c.direction = 'w';
           c.y = inter.y - 2;
           c.x = inter.x - 28;
         } else {
           if (inter.roadbottom == true) {
-            var dir = c.d;
+            var dir = c.direction;
           } else {
             //turn
-            c.s = 0;
+            c.speed = 0;
           }
         }
       } else {
         if (inter.roadleft == true) {
           var dir = 'w';
-          c.d = 'w';
+          c.direction = 'w';
           c.y = inter.y - 2;
           c.x = inter.x - 28;
         } else {
           //turn
-          c.s = 0;
+          c.speed = 0;
         }
       }
     }
@@ -325,10 +276,10 @@ class Car {
 
   draw(ctx) {
     ctx.fillStyle = this.color;
-    if (this.d == 'w') {
-      this.w = 25;
+    if (this.direction == 'w') {
+      this.width = 25;
       // 车身
-      ctx.rounded_rect(this.x, this.y, this.l, 12);
+      ctx.rounded_rect(this.x, this.y, this.length, 12);
       // 车窗
       ctx.fillStyle = '#99B3CE';
       ctx.fillRect(this.x + 5, this.y, 5, 12);
@@ -337,19 +288,19 @@ class Car {
       ctx.fillStyle = this.color;
       ctx.fillRect(this.x + 6, this.y - 2, 2, 2);
       ctx.fillRect(this.x + 6, this.y + 12, 2, 2);
-    } else if (this.d == 'e') {
-      this.w = 25;
-      ctx.rounded_rect(this.x, this.y, this.l, 12);
+    } else if (this.direction == 'e') {
+      this.width = 25;
+      ctx.rounded_rect(this.x, this.y, this.length, 12);
       ctx.fillStyle = '#99B3CE';
       ctx.fillRect(this.x + 15, this.y, 5, 12);
       ctx.fillRect(this.x + 4, this.y, 2, 12);
       ctx.fillStyle = this.color;
       ctx.fillRect(this.x + 14, this.y - 2, 2, 2);
       ctx.fillRect(this.x + 14, this.y + 12, 2, 2);
-    } else if (this.d == 's') {
-      this.w = 12;
+    } else if (this.direction == 's') {
+      this.width = 12;
       ctx.rotate(Math.PI / 2);
-      ctx.rounded_rect(this.y, -this.x, this.l, 12);
+      ctx.rounded_rect(this.y, -this.x, this.length, 12);
       ctx.fillStyle = '#99B3CE';
       ctx.fillRect(this.y + 15, -this.x, 5, 12);
       ctx.fillRect(this.y + 4, -this.x, 2, 12);
@@ -358,9 +309,9 @@ class Car {
       ctx.fillRect(this.y + 14, -this.x + 12, 2, 2);
       ctx.rotate(-Math.PI / 2);
     } else {
-      this.w = 12;
+      this.width = 12;
       ctx.rotate(Math.PI / 2);
-      ctx.rounded_rect(this.y, -this.x, this.l, 12);
+      ctx.rounded_rect(this.y, -this.x, this.length, 12);
       ctx.fillStyle = '#99B3CE';
       ctx.fillRect(this.y + 5, -this.x, 5, 12);
       ctx.fillRect(this.y + 18, -this.x, 2, 12);
@@ -376,7 +327,7 @@ class Car {
       this.recentStopStartTime = new Date().getTime();
       this.waitingNum ++;
     }
-    this.s = 0;
+    this.speed = 0;
     this.state = 0;
   }
 
@@ -390,16 +341,16 @@ class Car {
         }
       }
     }
-    this.s = speed;
+    this.speed = speed;
     this.state = 1;
   }
 
   showInfo(){
     const showObj = {
       "位置": `(${this.x},${this.y})`,
-      "速度": this.s,
+      "速度": this.speed,
       "停车状态": this.state===0 ? "停止":"运行",
-      "方向": this.d,
+      "方向": this.direction,
       "驶出次数": this.exitNum,
       "停车次数": this.waitingNum,
       "停车总时长(秒)": (this.waitingTime/1000).toFixed(3),
@@ -417,7 +368,7 @@ class Car {
       roadConfig.carNum += 1;
       this.x = roadConfig.x - defaultCar.l;
       this.y = roadConfig.y + roadConfig.height / 2 + 17;
-      this.d = 'e';
+      this.direction = 'e';
     }
     else if(randomNumber < probabilities[0] + probabilities[1]) {
       //lane2
@@ -425,7 +376,7 @@ class Car {
       roadConfig.carNum += 1;
       this.x = roadConfig.x + roadConfig.width / 2 + 17;
       this.y = roadConfig.y + roadConfig.height + defaultCar.l;
-      this.d = 'n';
+      this.direction = 'n';
     }
     else if(randomNumber < probabilities[0] + probabilities[1] + probabilities[2]) {
       //lane3
@@ -433,7 +384,7 @@ class Car {
       roadConfig.carNum += 1;
       this.x = roadConfig.x + roadConfig.width + defaultCar.l;
       this.y = roadConfig.y + roadConfig.height / 2 - 17;
-      this.d = 'w';
+      this.direction = 'w';
     }
     else {
       //lane4
@@ -441,7 +392,7 @@ class Car {
       roadConfig.carNum += 1;
       this.x = roadConfig.x + roadConfig.width / 2 - 17;
       this.y = roadConfig.y - defaultCar.l;
-      this.d = 's';
+      this.direction = 's';
     }
     let color_rand = Math.random();
     let color = '';
@@ -460,4 +411,4 @@ class Car {
   }
 }
 
-export default Car;
+// export default Vehicle;

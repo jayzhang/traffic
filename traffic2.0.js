@@ -99,7 +99,6 @@ function drawscene() {
 
   // 路口
   intersections_arr.forEach(intersection => {
-    // intersection.setTraffic(left_green);
     intersection.setTraffic(roadModel.greenH);
     intersection.draw(ctx);
   });
