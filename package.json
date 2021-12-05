@@ -8,6 +8,9 @@
     "build": "parcel build traffic2.0.html --no-minify"
   },
   "dependencies": {
+    "ansi-regex": "^5.0.1",
+    "glob-parent": "^5.1.2",
+    "node-forge": "^0.10.0",
     "parcel": "~1.12.3"
   },
   "license": "MIT",
